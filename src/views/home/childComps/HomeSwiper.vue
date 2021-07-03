@@ -2,7 +2,7 @@
   <!--使用轮播图组件-->
   <swiper>
     <swiper-item v-for="item in banner">
-      <a href="item.link">
+      <a :href="item.link">
         <img :src="item.image" alt="">
       </a>
     </swiper-item>
@@ -20,7 +20,7 @@ export default {
       default() {
         return []
       }
-    }
+    },
   },
   components: {
     Swiper,
