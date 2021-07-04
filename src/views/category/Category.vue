@@ -111,20 +111,20 @@ import BScroll from 'better-scroll'
 
 export default {
   name: "Category",
-  data(){
+  data() {
     return {
-      scroll:null
+      scroll: null
     }
   },
   mounted() {
-    this.scroll=new BScroll('.wrapper', {
-      probeType:3,
-      pullUpLoad:true
+    this.scroll = new BScroll('.wrapper', {
+      probeType: 3,
+      pullUpLoad: true
     })
-    this.scroll.on('scroll',(position)=>{
+    this.scroll.on('scroll', (position) => {
       // console.log(position);
     })
-    this.scroll.on('pullingUp',()=>{
+    this.scroll.on('pullingUp', () => {
       console.log('...');
       this.scroll.finishPullUp()
     })
