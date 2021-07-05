@@ -70,13 +70,24 @@ export default {
     this.getHomeGoods('pop');
     this.getHomeGoods('new');
     this.getHomeGoods('sell');
-    // 3.监听item中图片加载完成
+  },
+  mounted() {
+    // 监听item中图片加载完成
+    const refresh = this.debounce(this.$refs.scroll.refresh, 500)
     this.$bus.$on('itemImageLoad', () => {
-      this.$refs.scroll.refresh()
-      console.log('...');
+      refresh()
     })
   },
   methods: {
+    debounce(func, delay = 100) {
+      let timer = null;
+      return function (...args) {
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+          func.apply(this, args)
+        }, delay)
+      }
+    },
     /**
      * 事件监听相关
      */

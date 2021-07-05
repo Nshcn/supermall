@@ -52,6 +52,7 @@ export default {
       this.scroll && this.scroll.finishPullUp()
     },
     refresh() {
+      console.log('kdk');
       this.scroll && this.scroll.refresh();
     }
   }
