@@ -3,7 +3,7 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <scroll class="content">
+    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <home-swiper :banner="banner"/>
       <recommend-view :recommend="recommend"/>
       <feature-view/>
@@ -11,6 +11,7 @@
                    @tabClick="tabClick"/>
       <goods-list :goods="showGoods"/>
     </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -22,8 +23,9 @@ import FeatureView from "./childComps/FeatureView";
 import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabcontrol/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
-import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backTop/BackTop";
 
+import Scroll from "components/common/scroll/Scroll";
 import {getHomeMultidata, getHomeGoods} from "../../network/home";
 
 export default {
@@ -32,11 +34,12 @@ export default {
     HomeSwiper,
     FeatureView,
     RecommendView,
-
     NavBar,
+
     TabControl,
     GoodsList,
-    Scroll
+    Scroll,
+    BackTop
   },
   data() {
     return {
@@ -47,7 +50,8 @@ export default {
         'new': {page: 0, list: []},
         'sell': {page: 0, list: []}
       },
-      currentType: 'pop'
+      currentType: 'pop',
+      isShowBackTop: false
     }
   },
   computed: {
@@ -79,6 +83,13 @@ export default {
           this.currentType = 'sell'
           break
       }
+    },
+    backClick() {
+      // scrollTo第三个参数为滚动时间
+      this.$refs.scroll.scrollTo(0, 0, 500)
+    },
+    contentScroll(position) {
+      this.isShowBackTop = (-position.y) > 1000
     },
     /**
      * 网络请求相关

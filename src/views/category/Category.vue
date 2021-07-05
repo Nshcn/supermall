@@ -1,6 +1,8 @@
 <template>
   <!--  外部的盒子需要有明确高度-->
   <div class="wrapper">
+    <button @click="btnClick">按钮</button>
+    <div @click="divClick">div盒子</div>
     <ul class="content">
       <li>列表1</li>
       <li>列表2</li>
@@ -119,7 +121,8 @@ export default {
   mounted() {
     this.scroll = new BScroll('.wrapper', {
       probeType: 3,
-      pullUpLoad: true
+      pullUpLoad: true,
+      click:true
     })
     this.scroll.on('scroll', (position) => {
       // console.log(position);
@@ -128,6 +131,14 @@ export default {
       console.log('...');
       this.scroll.finishPullUp()
     })
+  },
+  methods:{
+    btnClick(){
+      console.log('btn')
+    },
+    divClick(){
+      console.log('div')
+    }
   }
 }
 </script>
