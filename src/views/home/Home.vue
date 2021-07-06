@@ -3,16 +3,21 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
+    <tab-control :title="['流行','新款','精选']"
+                 @tabClick="tabClick" ref="tabControl1"
+                 :class="{fixed:isTabFixed}"
+                 class="tab-control" v-show="isTabFixed"/>
     <scroll class="content"
             ref="scroll"
             :probe-type="3"
             @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
-      <home-swiper :banner="banner"/>
+      <home-swiper :banner="banner" @swiperImageLoad="swiperImageLoad"/>
       <recommend-view :recommend="recommend"/>
       <feature-view/>
-      <tab-control class="tab-control" :title="['流行','新款','精选']"
-                   @tabClick="tabClick"/>
+      <tab-control :title="['流行','新款','精选']"
+                   @tabClick="tabClick" ref="tabControl2"
+                   :class="{fixed:isTabFixed}"/>
       <goods-list :goods="showGoods"/>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"/>
@@ -56,7 +61,9 @@ export default {
         'sell': {page: 0, list: []}
       },
       currentType: 'pop',
-      isShowBackTop: false
+      isShowBackTop: false,
+      tabOffSetTop: 0,
+      isTabFixed: false
     }
   },
   computed: {
@@ -95,16 +102,26 @@ export default {
           this.currentType = 'sell'
           break
       }
+      // this.$refs.tabControl1.currentIndex = index
+      // this.$refs.tabControl2.currentIndex = index
     },
     backClick() {
       // scrollTo第三个参数为滚动时间
       this.$refs.scroll.scrollTo(0, 0, 500)
     },
     contentScroll(position) {
+      // 1.判断backtop是否显示
       this.isShowBackTop = (-position.y) > 1000
+      // 2.决定tabcontrol是否吸顶
+      this.isTabFixed = (-position.y) > this.tabOffSetTop;
     },
     loadMore() {
       this.getHomeGoods(this.currentType)
+    },
+    swiperImageLoad() {
+      // 获取tabcontrol的offsetTop
+      // 组件没有offsetTop属性，但是所有组件都有一个属性$el，用于获取组件中的元素
+      this.tabOffSetTop = this.$refs.tabControl2.$el.offsetTop
     },
     /**
      * 网络请求相关
@@ -138,20 +155,22 @@ export default {
   background-color: var(--color-tint);
   color: #fff;
 
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  /*需要设置z-index，否则会被挡住*/
+  /*在使用浏览器原生滚动时，为了让导航栏不跟随一起滚动*/
+  /*position: fixed;*/
+  /*left: 0;*/
+  /*right: 0;*/
+  /*top: 0;*/
+  /*!*需要设置z-index，否则会被挡住*!*/
+  position: relative;
   z-index: 9;
 }
 
-/*简单通过sticky实现吸顶效果*/
-.tab-control {
-  position: sticky;
-  top: 44px;
-  z-index: 9;
-}
+/*简单通过sticky实现吸顶效果，使用BScroll后失效*/
+/*.tab-control {*/
+/*  position: sticky;*/
+/*  top: 44px;*/
+/*  z-index: 9;*/
+/*}*/
 
 .content {
   position: absolute;
@@ -159,5 +178,10 @@ export default {
   bottom: 49px;
   left: 0;
   right: 0;
+}
+
+.tab-control {
+  position: relative;
+  z-index: 9;
 }
 </style>
