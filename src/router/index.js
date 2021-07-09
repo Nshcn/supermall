@@ -31,7 +31,7 @@ const routes = [
     component: Cart
   },
   {
-    path: '/detail',
+    path: '/detail/:iid',
     component: Detail
   }
 ]
