@@ -113,8 +113,8 @@ export default {
           this.currentType = 'sell'
           break
       }
-      // this.$refs.tabControl1.currentIndex = index
-      // this.$refs.tabControl2.currentIndex = index
+      this.$refs.tabControl1.currentIndex = index
+      this.$refs.tabControl2.currentIndex = index
     },
     backClick() {
       // scrollTo第三个参数为滚动时间
