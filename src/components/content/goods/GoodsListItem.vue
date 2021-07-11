@@ -21,14 +21,18 @@ export default {
     }
   },
   //GoodListItem.vue
-  computed:{
-    showImage(){
-      return this.goodsItem.image||this.product.show.img
+  computed: {
+    showImage() {
+      return this.goodsItem.image || this.goodsItem.show.img
     }
   },
   methods: {
     imageLoad() {
-      this.$bus.$emit('itemImageLoad')
+      if (this.$route.path.indexOf('/home')) {
+        this.$bus.$emit('homeItemImgLoad')
+      } else if (this.$route.path.indexOf('/detail')) {
+        this.$bus.$emit('detailItemImgLoad')
+      }
     },
     itemClick() {
       this.$router.push('/detail/' + this.goodsItem.iid)

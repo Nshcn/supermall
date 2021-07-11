@@ -23,8 +23,10 @@ import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import Scroll from "components/common/scroll/Scroll";
 import GoodsList from "components/content/goods/GoodsList";
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail";
+import {debounce} from "common/utils";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
+import {itemListenerMixin} from "common/mixin";
 
 export default {
   name: "Detail",
@@ -39,6 +41,7 @@ export default {
     DetailSwiper,
     DetailNavBar
   },
+  mixins: [itemListenerMixin],
   data() {
     return {
       iid: null,
@@ -48,7 +51,7 @@ export default {
       detailInfo: {},
       paramInfo: {},
       commentInfo: {},
-      recommends: []
+      recommends: [],
     }
   },
   created() {
@@ -77,7 +80,16 @@ export default {
       this.recommends = res.data.list
     })
   },
-
+  mounted() {
+    const refresh = debounce(this.$refs.scroll.refresh, 500)
+    this.itemImgListener = () => {
+      refresh()
+    }
+    this.$bus.$on('itemImgLoad', this.itemImgListener)
+  },
+  destroyed() {
+    this.$bus.$off('itemImgLoad', this.itemImgListener)
+  },
   methods: {
     imageLoad() {
       this.$refs.scroll.refresh();
