@@ -1,7 +1,7 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" @titleClick="titleClick"/>
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"/>
+    <scroll class="content" ref="scroll" @scroll="contentScroll" :probeType="3">
       <detail-swiper :top-images="topImages"/>
       <detail-base-info :goods="goods"/>
       <detail-shop-info :shop="shop"/>
@@ -53,7 +53,8 @@ export default {
       commentInfo: {},
       recommends: [],
       themeTopYs: [],
-      getThemeTopY: null
+      getThemeTopY: null,
+      currentIndex: 0
     }
   },
   created() {
@@ -90,6 +91,7 @@ export default {
       this.themeTopYs.push(this.$refs.params.$el.offsetTop);
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+      this.themeTopYs.push(Number.MAX_VALUE)
     }, 100)
   },
   mounted() {
@@ -109,6 +111,33 @@ export default {
     },
     titleClick(index) {
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 100);
+    },
+    contentScroll(position) {
+      const positionY = -position.y;
+      let length = this.themeTopYs.length;
+      for (let i = 0; i < length; i++) {
+        let iPos = this.themeTopYs[i];
+        /**
+         * 判断的方案:
+         *  方案一:
+         *    条件: (i < (length-1) && currentPos >= iPos && currentPos < this.themeTops[i+1]) || (i === (length-1) && currentPos >= iPos),
+         *    优点: 不需要引入其他的内容, 通过逻辑解决
+         *    缺点: 判断条件过长, 并且不容易理解
+         *  方案二:
+         *    条件: 给themeTops最后添加一个很大的值, 用于和最后一个主题的top进行比较.
+         *    优点: 简洁明了, 便于理解
+         *    缺点: 需要引入一个较大的int数字
+         * 疑惑: 在第一个判断中, 为什么不能直接判断(currentPos >= iPos)即可?
+         * 解答: 比如在某一个currentPos大于第0个时, 就会break, 不会判断后面的i了.
+         */
+        if (positionY >= iPos && positionY < this.themeTopYs[i + 1]) {
+          if (this.currentIndex !== i) {
+            this.currentIndex = i;
+            console.log(this.currentIndex);
+            this.$refs.nav.currentIndex = this.currentIndex
+          }
+        }
+      }
     }
   }
 }
