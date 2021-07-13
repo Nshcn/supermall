@@ -11,6 +11,7 @@
       <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
     <detail-bottom-bar/>
+    <back-top v-if="isShowBackTop" @click.native="backClick"/>
   </div>
 </template>
 
@@ -27,7 +28,7 @@ import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail";
 import {debounce} from "common/utils";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
-import {itemListenerMixin} from "common/mixin";
+import {itemListenerMixin, backTopMixin} from "common/mixin";
 import DetailBottomBar from "./childComps/DetailBottomBar";
 
 export default {
@@ -44,7 +45,7 @@ export default {
     DetailSwiper,
     DetailNavBar
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       iid: null,
@@ -57,7 +58,7 @@ export default {
       recommends: [],
       themeTopYs: [],
       getThemeTopY: null,
-      currentIndex: 0
+      currentIndex: 0,
     }
   },
   created() {
@@ -117,6 +118,9 @@ export default {
     },
     contentScroll(position) {
       const positionY = -position.y;
+      // 1.判断backtop是否显示
+      this.isShowBackTop = (positionY) > 1000
+      // 2.滚动对应标题高亮
       let length = this.themeTopYs.length;
       for (let i = 0; i < length; i++) {
         let iPos = this.themeTopYs[i];
@@ -163,6 +167,7 @@ export default {
   z-index: 9;
   background-color: #fff;
 }
+
 .content {
   /*100%是相对于父元素，因此需要给父元素也设置高度，否则父元素会根据内容撑高*/
   height: calc(100% - 44px - 49px);
