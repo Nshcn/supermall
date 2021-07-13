@@ -10,7 +10,7 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
-    <detail-bottom-bar/>
+    <detail-bottom-bar @addToCart="addToCart"/>
     <back-top v-if="isShowBackTop" @click.native="backClick"/>
   </div>
 </template>
@@ -109,6 +109,18 @@ export default {
     this.$bus.$off('itemImgLoad', this.itemImgListener)
   },
   methods: {
+    addToCart() {
+      // 1.获取需要在购物车中显示的信息
+      const product = {}
+      product.image = this.topImages[0]
+      product.title = this.goods.title
+      product.desc = this.goods.desc
+      product.price = this.goods.realPrice
+      product.iid = this.iid
+
+      // 2.将商品添加到store购物车中
+      this.$store.commit('addCart', product)
+    },
     imageLoad() {
       this.$refs.scroll.refresh();
       this.getThemeTopY()
@@ -140,7 +152,6 @@ export default {
         if (positionY >= iPos && positionY < this.themeTopYs[i + 1]) {
           if (this.currentIndex !== i) {
             this.currentIndex = i;
-            console.log(this.currentIndex);
             this.$refs.nav.currentIndex = this.currentIndex
           }
         }
