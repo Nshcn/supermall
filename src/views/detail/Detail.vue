@@ -10,6 +10,7 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
+    <detail-bottom-bar/>
   </div>
 </template>
 
@@ -27,10 +28,12 @@ import {debounce} from "common/utils";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
 import {itemListenerMixin} from "common/mixin";
+import DetailBottomBar from "./childComps/DetailBottomBar";
 
 export default {
   name: "Detail",
   components: {
+    DetailBottomBar,
     GoodsList,
     DetailCommentInfo,
     DetailParamInfo,
@@ -159,5 +162,9 @@ export default {
   position: relative;
   z-index: 9;
   background-color: #fff;
+}
+.content {
+  /*100%是相对于父元素，因此需要给父元素也设置高度，否则父元素会根据内容撑高*/
+  height: calc(100% - 44px - 49px);
 }
 </style>
